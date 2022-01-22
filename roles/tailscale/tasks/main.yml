@@ -1,0 +1,35 @@
+---
+
+- name: Tailscale auth key required
+  fail:
+    msg: >
+      You must include an Auth Key.
+      Set a `tailscale_auth_key` variable.
+      You can create this key from https://login.tailscale.com/admin/authkeys
+    when:
+      - not tailscale_auth_key or tailscale_auth_key == None
+
+- name: Skipping authentication
+  debug:
+    msg: You have set `tailscale_up_skip` for this node, and it will not join the Tailnet.
+  when: tailscale_up_skip | bool
+
+- name: Operating system
+  debug:
+    msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} ({{ ansible_distribution_release }})"
+
+- name: Enable service
+  become: true
+  service:
+    name: "{{ tailscale_service }}"
+    state: started
+    enabled: true
+
+- name: Check if Tailscale is connected
+  command: tailscale status
+  changed_when: false
+  register: tailscale_status
+  failed_when:
+    - tailscale_status.rc != 0
+    - "'Logged out.' not in tailscale_status.stdout"
+
