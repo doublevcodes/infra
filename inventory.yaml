@@ -3,12 +3,11 @@ all:
     wizardry:
       hosts:
         potter:
-          # ansible_port: 2304
+          ansible_port: 2304
           ansible_host: potter.wizardry.vivaanverma.com.
         dumbledore:
-          # ansible_port: 2304
+          ansible_port: 2304
           ansible_host: dumbledore.wizardry.vivaanverma.com.
       vars:
-        ansible_port: 2304
         ntp_server: time.cloudflare.com.
 
